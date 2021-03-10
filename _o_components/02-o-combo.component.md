@@ -71,6 +71,54 @@ The `o-combo` shows automatically an error message when the `required` attribute
 
 You can see this and more examples of this component in the [OntimizeWeb playground]({{site.playgroundurl}}/main/inputs/combo){:target="_blank"}.
 
+### Custom renderers
+
+A custom renderer allows you to display the data of a combo formatted as you desire. For this, you need to create a new component that extends the combo renderer class and place it inside your o-combo component.
+
+The requisites for a custom combo renderer component are the following:
+
+- The component must extend the `OComboCustomRenderer` class.
+
+- Your renderer template must reference the template container. For this, wrap the content of your component HTML with the `ng-template` tag and add define a template variable. Then create an attribute to your component referencing the template container defined previously, add this line to your component: `@ViewChild('templateref', { read: TemplateRef }) public templateref: TemplateRef<any>`. This will give your component a reference to acces the template container.
+
+- If you want to customize the internal value of the cell (this value is used for filtering or exporting the table data), you must overwrite the `getCellData` method.
+
+You have an example of a custom renderer below. It displays a person full name in a table cell, for this, it concat the values in the `getCellData` method and displays its value in the template.
+
+```javascript
+import { Component, Injector, TemplateRef ViewChild } from '@angular/core';
+import { OBaseTableCellRenderer } from 'ontimize-web-ngx';
+
+@Component({
+  selector: 'custom-render',
+  templateUrl: './custom-render.component.html'
+})
+
+export class OTableCellRendererName extends OBaseTableCellRenderer {
+
+  @ViewChild('templateref', { read: TemplateRef, static: false }) public templateref: TemplateRef<any>;
+
+  constructor(protected injector: Injector) {
+    super(injector);
+  }
+
+  getCellData(cellvalue: any, rowvalue: Object) {
+    return rowvalue['SURNAME'].toUpperCase() + ', ' + rowvalue['NAME'];
+  }
+
+}
+```
+
+```html
+  <ng-template #templateref let-cellvalue="cellvalue" let-rowvalue="rowvalue">
+    {% raw %}{{ getCellData(cellvalue, rowvalue) }}{% endraw %}
+  </ng-template>
+```
+
+The *let* keyword declares a template input variable that you reference within the template. The input variables are `cellvalue` and `rowvalue`. The parser translates let cellvalue and let rowvalue into variables named, `let-cellvalue` and `let-rowvalue`.
+
+Finally, add the created component to your module for including it in your table.
+
 ## Locker  <span class='menuitem-badge'>new<span>
 
 OntimizeWeb offers the `oLocker` directive to the `o-combo` that should to lock the component when you configure the component to query the data from a service
