@@ -75,6 +75,8 @@ docs:
         url: /customize/typography/
       - title: "Style guide"
         url: /customize/style-guide/
+      - title: "Flat design"
+        url: /customize/flatdesign/
       - title: "Icons"
         url: /customize/icons/
       - title: "Tabs"
